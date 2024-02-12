@@ -20,7 +20,7 @@ import csv
 
 # Function add_book prompts user input for Title, Author, Date to build a book dict, which is then written to books.csv
 # to track and save that books as part of the reading list
-def add_book(reading_list):
+def add_book():
     # Build book to add as dict obj
     book = {
         "Title": input("Enter the title of your book: "),
@@ -29,7 +29,7 @@ def add_book(reading_list):
     }
 
     # Add it to the reading list
-    reading_list.append(book)
+    #reading_list.append(book)
 
     # Write the new dict to the .csv file to track and save the reading list
     with open('books.csv', 'a', newline='') as file:
@@ -37,19 +37,57 @@ def add_book(reading_list):
         writer.writerow(book)
 
     # Print confirmation message on execution complete
-    print("Book added successfully")
+    print("\nBook added successfully")
 
 
 # Function retrieve_books retrieves all books in books.csv, essentially acting as a "print all books in the reading
 # list" function.
-def retrieve_books(reading_list):
+def retrieve_books():
     # Build a dict reader using the .csv
-    with open('books.csv', 'a', newline='') as file:
-        reader = csv.DictReader(file, fieldnames=["Title", "Author", "date"])
+    with open('books.csv', 'r+', newline='') as file:
+        reader = csv.DictReader(file, fieldnames=["Title", "Author", "Date"])
 
         # Print each row using dict struct
         for row in reader:
-            print(row["Title"], ", by ", row["Author"], ". Published ", row["Date"])
+            print(row["Title"] + ", by " + row["Author"] + ". Published " + row["Date"] + ".")
+
+
+# Function retrieve_books retrieves all books in books.csv, essentially acting as a "print all books in the reading
+# list" function.
+def retrieve_book_title_search(title: str):
+    # Build a dict reader using the .csv
+    with open('books.csv', 'r+', newline='') as file:
+        reader = csv.DictReader(file, fieldnames=["Title", "Author", "Date"])
+
+        # Track if we found a matching title using a boolean and a for loop
+        title_found = False
+        for row in reader:
+            if row["Title"].upper() == title.upper():
+                print(row["Title"] + ", by " + row["Author"] + ". Published " + row["Date"] + ".")
+                title_found = True  # Title found
+
+        # If a matching title is not found, print notice to user
+        if not title_found:
+            print("\nSearch Complete: No match found.")
+
+
+def go_again():
+    # Print prompt
+    print("\nWould you like to perform another task?\n\nYes (Input any characters)\nNo (Press enter to quit)\n")
+    decision = input("")
+    not_again = decision == ""
+    if not_again:
+        return quit_application()
+
+    else:
+        return False
+
+
+# Function quit prints an exit message and returns a bool that, if set to application_quit in mainloop, causes the
+# program to exit.
+def quit_application():
+    print("You selected 'Quit'!\nGoodbye...\n")
+    return True
 
 
 # PROGRAM
@@ -84,10 +122,18 @@ while not application_quit:
     match selection:
         case 1:
             print("\nYou selected 'Add Book!\n")
+            add_book()
+            application_quit = go_again()
+
         case 2:
             print("\nYou selected 'View Books!\n")
+            retrieve_books()
+            application_quit = go_again()
+
         case 3:
             print("\nYou selected 'Search Book!\n")
+            retrieve_book_title_search(input("Please enter the title of the book you would like to search for: "))
+            application_quit = go_again()
+
         case 4:
-            print("\nYou selected 'Quit!\nGoodbye...")
-            application_quit = True
+            application_quit = quit_application()
