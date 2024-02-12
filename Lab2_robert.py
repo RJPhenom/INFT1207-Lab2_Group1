@@ -9,6 +9,7 @@
 #                   format.
 ###############################################################################
 import csv
+import unittest
 
 # CONSTS
 
@@ -90,6 +91,16 @@ def quit_application():
     return True
 
 
+# TESTS
+# FunctionTests contains asserts to test each of the defined functions
+class FunctionTests(unittest.TestCase):
+    def test_add(self):
+        print()
+
+    def test_retrieval(self):
+        print()
+
+
 # PROGRAM
 # Welcome message
 print("\nWelcome to the Reading List Tracker!\n")
@@ -137,3 +148,5 @@ while not application_quit:
 
         case 4:
             application_quit = quit_application()
+
+
