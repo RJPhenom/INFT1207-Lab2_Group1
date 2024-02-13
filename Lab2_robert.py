@@ -22,8 +22,10 @@ import csv
 # to track and save that books as part of the reading list
 def add_book():
     # Build book to add as dict obj
-    # Use boolean to validate inputs
+    # Use boolean to validate inputs and check for duplicate
     book_valid = False
+    duplicate = False
+
     while not book_valid:
         book = {
             "Title": input("Enter the title of your book: "),
@@ -53,15 +55,23 @@ def add_book():
                 print("\n***INPUT ERROR***\nBook details cannot be null. Please try again.\n")
                 errors = True
 
+        # Finally, perform a duplicate check
+        duplicate = retrieve_book_title_search(book["Title"])
+
         book_valid = not errors
 
-    # Write the new dict to the .csv file to track and save the reading list
-    with open('books.csv', 'a', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=["Title", "Author", "Date"])
-        writer.writerow(book)
+    # If not a duplicate, write the new dict to the .csv file to track and save the reading list
+    if not duplicate:
+        with open('books.csv', 'a', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=["Title", "Author", "Date"])
+            writer.writerow(book)
 
-    # Print confirmation message on execution complete
-    print("\nBook added successfully")
+        # Print confirmation message on execution complete
+        print("\nBook added successfully")
+
+    # Else, print duplicate warning
+    else:
+        print("\nDuplicate Detected: Book not added.\n")
 
 
 # Function retrieve_books retrieves all books in books.csv, essentially acting as a "print all books in the reading
@@ -79,20 +89,24 @@ def retrieve_books():
 # Function retrieve_books retrieves all books in books.csv, essentially acting as a "print all books in the reading
 # list" function.
 def retrieve_book_title_search(title: str):
+    # Define return boolean that also tracks if a title was found
+    title_found = False
+
     # Build a dict reader using the .csv
     with open('books.csv', 'r+', newline='') as file:
         reader = csv.DictReader(file, fieldnames=["Title", "Author", "Date"])
 
-        # Track if we found a matching title using a boolean and a for loop
-        title_found = False
+        # Search for a matching title using a for loop
         for row in reader:
             if row["Title"].upper() == title.upper():
-                print(row["Title"] + ", by " + row["Author"] + ". Published " + row["Date"] + ".")
+                print("\n" + row["Title"] + ", by " + row["Author"] + ". Published " + row["Date"] + ".")
                 title_found = True  # Title found
 
         # If a matching title is not found, print notice to user
         if not title_found:
             print("\nSearch Complete: No match found.")
+
+    return title_found
 
 
 def go_again():
@@ -132,6 +146,7 @@ while not application_quit:
         print("\nMain Menu")
         print("Please choose from one of the four options:\n\n1:\tAdd Book\n2:\tView Books\n3:\tBook Search\n4:\tQuit")
 
+        # Ensure option selected is valid.
         try:
             selection = int(input("\nInput selection: "))
             if selection in (1, 2, 3, 4):
