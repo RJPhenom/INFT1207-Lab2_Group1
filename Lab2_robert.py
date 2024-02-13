@@ -9,7 +9,6 @@
 #                   format.
 ###############################################################################
 import csv
-import unittest
 
 # CONSTS
 
@@ -23,14 +22,38 @@ import unittest
 # to track and save that books as part of the reading list
 def add_book():
     # Build book to add as dict obj
-    book = {
-        "Title": input("Enter the title of your book: "),
-        "Author": input("Enter the author of your book: "),
-        "Date": input("Enter the date of your book's publication: ")
-    }
+    # Use boolean to validate inputs
+    book_valid = False
+    while not book_valid:
+        book = {
+            "Title": input("Enter the title of your book: "),
+            "Author": input("Enter the author of your book: "),
+            "Date": input("Enter the date of your book's publication: ")
+        }
 
-    # Add it to the reading list
-    #reading_list.append(book)
+        # Boolean tracks if errors were hit
+        errors = False
+        try:
+            # Validate date formatting and not future dated
+            int_date = int(book["Date"])
+
+            # If valid format, check if date is greater than current year
+            if int_date > 2024:
+                print("\n***INPUT ERROR***\nDates cannot be in the future.\nPlease try again.\n")
+                errors = True
+
+        # Exception handling for date formatting errors
+        except:
+            print("\n***INPUT ERROR***\nInvalid date format. (Please use YYYY)\n")
+            errors = True
+
+        # Check for null values error
+        for key in book:
+            if book[key] == "":
+                print("\n***INPUT ERROR***\nBook details cannot be null. Please try again.\n")
+                errors = True
+
+        book_valid = not errors
 
     # Write the new dict to the .csv file to track and save the reading list
     with open('books.csv', 'a', newline='') as file:
@@ -89,16 +112,6 @@ def go_again():
 def quit_application():
     print("You selected 'Quit'!\nGoodbye...\n")
     return True
-
-
-# TESTS
-# FunctionTests contains asserts to test each of the defined functions
-class FunctionTests(unittest.TestCase):
-    def test_add(self):
-        print()
-
-    def test_retrieval(self):
-        print()
 
 
 # PROGRAM
