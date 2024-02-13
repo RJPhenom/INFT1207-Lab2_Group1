@@ -10,14 +10,7 @@
 ###############################################################################
 import csv
 
-# CONSTS
-
-# VARS
-
 # FUNCS
-# mandatory linebreaks for asinine pep8 requirements in JetBrain(les)s
-
-
 # Function add_book prompts user input for Title, Author, Date to build a book dict, which is then written to books.csv
 # to track and save that books as part of the reading list
 def add_book():
